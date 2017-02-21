@@ -10,3 +10,5 @@ use Mix.Config
 # Uncomment to use target specific configurations
 
 # import_config "#{Mix.Project.config[:target]}.exs"
+config :nerves, :firmware,
+  fwup_conf: "config/rpi3/fwup.conf"
