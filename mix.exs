@@ -23,11 +23,12 @@ defmodule HelloTemp.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {HelloTemp, []},
-     applications: [:logger]]
+     applications: [:logger, :elixir_ale]]
   end
 
   def deps do
-    [{:nerves, "~> 0.4.0"}]
+    [{:nerves, "~> 0.4.0"},
+     {:elixir_ale, "~> 0.5.7"}]
   end
 
   def system(target) do
