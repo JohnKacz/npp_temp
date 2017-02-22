@@ -1,20 +1,36 @@
 defmodule HelloTemp do
   use Application
 
-  # See http://elixir-lang.org/docs/stable/elixir/Application.html
-  # for more information on OTP Applications
+  @moduledoc """
+    Simple example to read temperature from DS18B20 temperature sensor
+  """
+
+  require Logger
+
+  @base_dir "/sys/bus/w1/devices/"
+
   def start(_type, _args) do
-    import Supervisor.Spec, warn: false
+    Logger.debug "Start measuring temperature..."
+    spawn(fn ->  read_temp_forever() end)
+    {:ok, self()}
+  end
 
-    # Define workers and child supervisors to be supervised
-    children = [
-      # worker(HelloTemp.Worker, [arg1, arg2, arg3]),
-    ]
+  defp read_temp_forever do
+    File.ls!(@base_dir)
+      |> Enum.filter(&(String.starts_with?(&1, "28-")))
+      |> Enum.each(&read_temp(&1, @base_dir))
 
-    # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: HelloTemp.Supervisor]
-    Supervisor.start_link(children, opts)
+    :timer.sleep(1000)
+    read_temp_forever()
+  end
+
+  defp read_temp(sensor, base_dir) do
+    sensor_data = File.read!("#{base_dir}#{sensor}/w1_slave")
+    # Logger.debug("reading sensor: #{sensor}: #{sensor_data}")
+    {temp, _} = Regex.run(~r/t=(\d+)/, sensor_data)
+    |> List.last
+    |> Float.parse
+    Logger.debug "#{temp*9/5000+32} F"
   end
 
 end
