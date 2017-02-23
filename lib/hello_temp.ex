@@ -3,6 +3,8 @@ defmodule HelloTemp do
 
   @moduledoc """
     Simple example to read temperature from DS18B20 temperature sensor
+    For the longer sensors red - 3.3v, yellow - GND, and green - signal 
+    For the short sensors  red - 3.3v, black - GND, and yellow - signal 
   """
 
   require Logger
